@@ -112,7 +112,7 @@ class SnapshotMotionSensorAccessory {
 				this.lastSize = size;
 
 				if (percent >= this.minChangePercent && percent <= this.maxChangePercent) {
-					this.log(`Motion detected (change: ${percent.toFixed(2)}%)`);
+					this.log('Motion detected! Change: ' + percent.toFixed(2) + '% Reference: ' + ~~reference + ' Size: ' + size);
 					this.motionDetected = true;
 					this.lastMotion = now;
 					this.accumulatedDelta = 0;
