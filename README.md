@@ -4,7 +4,7 @@ A lightweight motion sensor plugin for Homebridge that detects motion based on c
 
 ## 🔍 Problem
 
-Some intercoms and IP cameras (such as **Loxone Intercom XL**) do not provide a native motion detection feature or RTSP stream compatible with HomeKit Secure Video (HKSV). These devices often expose only a JPEG/MJPEG snapshot over HTTP — insufficient for full automation and HKSV features.
+Some intercoms and IP cameras (such as **Loxone Intercom**) do not provide a native motion detection feature or RTSP stream compatible with HomeKit Secure Video (HKSV). These devices often expose only a JPEG/MJPEG snapshot over HTTP — insufficient for full automation and HKSV features.
 
 ## ✅ Solution
 
@@ -37,16 +37,16 @@ Add an accessory to your Homebridge `config.json`:
 {
   "accessories": [
     {
-      "accessory": "SnapshotMotion",
-      "name": "Door Motion Sensor",
-      "snapshotUrl": "http://your-camera/snapshot.jpg",
-      "webhookUrl": "http://your-system/motion",
-      "minChangePercent": 3,
-      "maxChangePercent": 95,
-      "checkInterval": 500,
-      "motionCooldown": 10,
-      "historyLimit": 32,
-      "debug": true
+        "accessory": "SnapshotMotionSensor",
+        "name": "Snapshot Motion Sensor",
+        "snapshotUrl": "http://192.168.1.10:8888/snapshot.jpg",
+        "minChangePercent": 2,
+        "maxChangePercent": 80,
+        "checkInterval": 555,
+        "cooldownSeconds": 10,
+        "historyLimit": 32,
+        "webhookUrl": "http://localhost:1111/motion",
+        "debug": true
     }
   ]
 }
@@ -81,8 +81,8 @@ Add an accessory to your Homebridge `config.json`:
 ## 💠 Developed by
 
 **Vladimir Sobolev**
-🔗	[https://github.com/350d](https://github.com/350d)
-𝕏	[@350d](https://twitter.com/350d)
+🔗   [https://github.com/350d](https://github.com/350d)
+𝕏   [@350d](https://twitter.com/350d)
 
 ---
 

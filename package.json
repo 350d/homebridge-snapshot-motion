@@ -1,6 +1,6 @@
 {
   "name": "homebridge-snapshot-motion",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Snapshot-based motion sensor plugin for Homebridge",
   "author": "Vladimir Sobolev",
   "homepage": "https://github.com/350d/homebridge-snapshot-motion",
