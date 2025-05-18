@@ -63,8 +63,7 @@ class SnapshotMotionSensorAccessory {
 			const now = Date.now();
 			if (this.motionDetected && now - this.lastMotion < this.cooldownSeconds * 1000) {
 				this.log('Cooldown...');
-				this.sizeHistory.push(~~((average(this.sizeHistory)+this.lastSize)/2));
-				if (this.sizeHistory.length > this.historyLimit) this.sizeHistory.shift();
+				this.sizeHistory.push(median(this.sizeHistory));
 				setTimeout(this.monitoring, this.checkInterval);
 				return;
 			}
@@ -99,14 +98,14 @@ class SnapshotMotionSensorAccessory {
 
 				if (size > headerCorrection) size -= headerCorrection;
 
-				if (this.sizeHistory.length < this.historyLimit / 2) {
+				if (this.sizeHistory.length <= this.historyLimit / 2) {
 					this.log('Collecting history: ' + ~~(this.sizeHistory.length*100/(this.historyLimit / 2)) + '%');
-					this.sizeHistory.push(size);
+					this.sizeHistory.push(size, size);
 					setTimeout(this.monitoring, this.checkInterval);
 					return;
 				}
 
-				const reference = median(this.sizeHistory);
+				const reference = Math.min(this.sizeHistory[0], median(this.sizeHistory));
 				const diff = Math.abs(size - reference);
 				const percent = (diff / reference) * 100;
 
@@ -116,8 +115,9 @@ class SnapshotMotionSensorAccessory {
 					this.log(`Motion detected (change: ${percent.toFixed(2)}%)`);
 					this.motionDetected = true;
 					this.lastMotion = now;
+					this.accumulatedDelta = 0;
 
-					this.sizeHistory.push(~~((reference+size)/2));
+					this.sizeHistory.push(reference);
 
 					this.service.updateCharacteristic(Characteristic.MotionDetected, true);
 
@@ -145,7 +145,7 @@ class SnapshotMotionSensorAccessory {
 					this.sizeHistory.push(size);
 				}
 
-				if (this.sizeHistory.length > this.historyLimit) this.sizeHistory.shift();
+				this.sizeHistory = this.sizeHistory.slice(-this.historyLimit);
 
 				setTimeout(this.monitoring, this.checkInterval);
 			});
