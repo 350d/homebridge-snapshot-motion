@@ -52,20 +52,22 @@ class SnapshotMotionSensorAccessory {
 
 		this.sizeHistory = [];
 		this.historyLimit = config.historyLimit || 32;
-
-		this.startMonitoring();
-	}
-
-	startMonitoring() {
-		setInterval(() => {
+		this.lastSize = 0;
+		
+		this.monitoring = () => {
 			const now = Date.now();
 			if (this.motionDetected && now - this.lastMotion < this.cooldownSeconds * 1000) {
+				this.log('Cooldown...');
+				this.sizeHistory.push(~~(median(this.sizeHistory)+this.lastSize)/2);
+				if (this.sizeHistory.length > this.historyLimit) this.sizeHistory.shift();
+				setTimeout(this.monitoring, this.cooldownSeconds * 1000 - (now - this.lastMotion) + 111);
 				return;
 			}
 
 			request(this.requestOptions, (error, response) => {
 				if (error || !response) {
 					this.log('Request failed');
+					setTimeout(this.monitoring, this.checkInterval);
 					return;
 				}
 
@@ -93,8 +95,9 @@ class SnapshotMotionSensorAccessory {
 				if (size > headerCorrection) size -= headerCorrection;
 
 				if (this.sizeHistory.length < this.historyLimit / 2) {
-					this.log('Collecting history: ' + Math.round(this.sizeHistory.length*100/(this.historyLimit / 2)) + '%');
+					this.log('Collecting history: ' + ~~(this.sizeHistory.length*100/(this.historyLimit / 2)) + '%');
 					this.sizeHistory.push(size);
+					setTimeout(this.monitoring, this.checkInterval);
 					return;
 				}
 
@@ -102,12 +105,14 @@ class SnapshotMotionSensorAccessory {
 				const diff = Math.abs(size - reference);
 				const percent = (diff / reference) * 100;
 
+				this.lastSize = size;
+
 				if (percent >= this.minChangePercent && percent <= this.maxChangePercent) {
 					this.log(`Motion detected (change: ${percent.toFixed(2)}%)`);
 					this.motionDetected = true;
 					this.lastMotion = now;
 
-					this.sizeHistory.push(Math.round((reference+size)/2));
+					this.sizeHistory.push(~~(reference+size)/2);
 
 					this.service.updateCharacteristic(Characteristic.MotionDetected, true);
 
@@ -132,17 +137,16 @@ class SnapshotMotionSensorAccessory {
 
 				} else {
 					this.log('Motion delta: ' + percent.toFixed(2) + '% Reference: ' + ~~reference + ' Size: ' + size);
-
-					if (now - this.lastMotion >= this.cooldownSeconds * 1000) {
-						this.sizeHistory.push(size);
-					}
+					this.sizeHistory.push(size);
 				}
 
-				if (this.sizeHistory.length > this.historyLimit) {
-					this.sizeHistory.shift();
-				}
+				if (this.sizeHistory.length > this.historyLimit) this.sizeHistory.shift();
+
+				setTimeout(this.monitoring, this.checkInterval);
 			});
-		}, this.checkInterval);
+		}
+
+		this.monitoring();
 	}
 
 	getServices() {
