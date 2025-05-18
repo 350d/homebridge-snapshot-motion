@@ -44,8 +44,13 @@ class SnapshotMotionSensorAccessory {
 			url: config.snapshotUrl,
 			method: 'GET',
 			headers: {
-				Connection: 'keep-alive',
-				Range: 'bytes=0-0',
+				'Connection': 'keep-alive',
+				'Cache-Control': 'no-cache',
+				'Pragma': 'no-cache',
+				'Accept': 'image/jpeg,image/*;q=0.8,*/*;q=0.5',
+				'Accept-Encoding': 'identity',
+				'User-Agent': 'HomebridgeSnapshotMotionSensor',
+				'Range': 'bytes=0-0',
 			},
 			agent: config.snapshotUrl.startsWith('https://') ? HttpsAgent : HttpAgent,
 		};
@@ -58,9 +63,9 @@ class SnapshotMotionSensorAccessory {
 			const now = Date.now();
 			if (this.motionDetected && now - this.lastMotion < this.cooldownSeconds * 1000) {
 				this.log('Cooldown...');
-				this.sizeHistory.push(~~(median(this.sizeHistory)+this.lastSize)/2);
+				this.sizeHistory.push(~~((average(this.sizeHistory)+this.lastSize)/2));
 				if (this.sizeHistory.length > this.historyLimit) this.sizeHistory.shift();
-				setTimeout(this.monitoring, this.cooldownSeconds * 1000 - (now - this.lastMotion) + 111);
+				setTimeout(this.monitoring, this.checkInterval);
 				return;
 			}
 
@@ -112,7 +117,7 @@ class SnapshotMotionSensorAccessory {
 					this.motionDetected = true;
 					this.lastMotion = now;
 
-					this.sizeHistory.push(~~(reference+size)/2);
+					this.sizeHistory.push(~~((reference+size)/2));
 
 					this.service.updateCharacteristic(Characteristic.MotionDetected, true);
 
