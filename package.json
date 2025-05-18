@@ -1,0 +1,51 @@
+{
+  "name": "homebridge-snapshot-motion",
+  "version": "0.1.8",
+  "description": "Snapshot-based motion sensor plugin for Homebridge",
+  "author": "Vladimir Sobolev",
+  "homepage": "https://github.com/350d/homebridge-snapshot-motion",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/350d/homebridge-snapshot-motion.git"
+  },
+  "bugs": {
+    "url": "https://github.com/350d/homebridge-snapshot-motion/issues",
+    "email": "v.sobolev@gmail.com"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "homebridge",
+    "motion",
+    "sensor",
+    "camera",
+    "mjpeg"
+  ],
+  "main": "index.js",
+  "engines": {
+    "homebridge": "^1.6.0 || ^2.0.0-beta.0",
+    "node": "^18.20.4 || ^20.15.1 || ^22"
+  },
+  "homebridge": {
+  	"pluginType": "accessory",
+    "accessories": [
+      {
+        "accessory": "SnapshotMotionSensor",
+        "name": "Snapshot Motion Sensor"
+      }
+    ]
+  },
+  "dependencies": {
+    "request": "^2.88.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "semistandard": "^8.0.0"
+  },
+  "scripts": {
+    "debug": "DEBUG=* homebridge --debug --plugin-path .",
+    "test": "semistandard",
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags"
+  }
+}

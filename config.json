@@ -1,0 +1,15 @@
+{
+	"bridge": {},
+	"description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
+	"accessories": [
+		{
+			"accessory": "SnapshotMotionSensor",
+			"name": "Snapshot Motion Sensor",
+			"snapshotUrl": "http://192.168.1.10:8888/snapshot.jpg",
+			"minChangePercent": 4,
+			"maxChangePercent": 80,
+			"checkEveryNth": 5,
+			"webhookUrl": "http://localhost:1111/motion"
+		}
+	]
+}

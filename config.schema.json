@@ -1,0 +1,69 @@
+{
+	"pluginAlias": "SnapshotMotionSensor",
+	"pluginType": "accessory",
+	"singular": true,
+	"headerDisplay": "Snapshot-based Motion Sensor",
+	"schema": {
+		"type": "object",
+		"properties": {
+			"name": {
+				"type": "string",
+				"title": "Name",
+				"default": "Snapshot Motion Sensor"
+			},
+			"snapshotUrl": {
+				"type": "string",
+				"title": "Snapshot URL",
+				"description": "The URL to fetch snapshot image HEAD from"
+			},
+			"minChangePercent": {
+				"type": "number",
+				"title": "Minimum Change %",
+				"description": "Minimum size % change to trigger motion",
+				"default": 1,
+				"minimum": 0,
+				"maximum": 100
+			},
+			"maxChangePercent": {
+				"type": "number",
+				"title": "Maximum Change %",
+				"description": "Maximum size % change to trigger motion",
+				"default": 60,
+				"minimum": 0,
+				"maximum": 100
+			},
+			"checkInterval": {
+				"type": "number",
+				"title": "Polling Interval (ms)",
+				"description": "How often to check snapshot size",
+				"default": 555
+			},
+			"cooldownSeconds": {
+				"type": "number",
+				"title": "Cooldown (seconds)",
+				"description": "Time after motion before it can trigger again",
+				"default": 10
+			},
+			"historyLimit": {
+				"type": "number",
+				"title": "History Size",
+				"description": "Number of previous frame sizes to remember for comparison",
+				"default": 32,
+				"minimum": 1,
+				"maximum": 256
+			},
+			"webhookUrl": {
+				"type": "string",
+				"title": "Webhook URL",
+				"description": "Optional URL to call when motion is detected",
+				"default": ""
+			},
+			"debug": {
+				"title": "Debug log",
+				"type": "boolean",
+				"default": true
+			}
+		},
+		"required": ["name", "snapshotUrl"]
+	}
+}
